@@ -82,6 +82,19 @@ struct LCSettingsView: View {
     var body: some View {
         NavigationView {
             Form {
+                Section {
+                    NavigationLink {
+                        PortalDoctorView()
+                    } label: {
+                        Label(pl("Doctor: revisar instalación", "Doctor: check setup"), systemImage: "stethoscope")
+                    }
+                } header: {
+                    Text("Portal")
+                } footer: {
+                    Text(pl("Comprueba el certificado, la firma, las extensiones y el espacio, y te dice cómo arreglar cada problema.",
+                            "Checks the certificate, signing, extensions and storage, and tells you how to fix each problem."))
+                }
+
                 if sharedModel.multiLCStatus != 2 {
                     Section{
                         if !certificateDataFound {

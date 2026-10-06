@@ -18,6 +18,8 @@ struct LCTabView: View {
     @State var shouldToggleMainWindowOpen = false
     @Environment(\.scenePhase) var scenePhase
     @StateObject var downloadHelper = DownloadHelper()
+    @AppStorage("PortalOnboardingDone") private var portalOnboardingDone = false
+    @State private var showPortalOnboarding = false
 
     let pub = NotificationCenter.default.publisher(for: UIScene.didDisconnectNotification)
     
@@ -48,6 +50,10 @@ struct LCTabView: View {
                     Label("lc.tabView.settings".loc, systemImage: "gearshape.fill")
                 }
                 .tag(LCTabIdentifier.settings)
+        }
+        .tint(PortalTheme.accent)
+        .fullScreenCover(isPresented: $showPortalOnboarding) {
+            PortalOnboardingView(isPresented: $showPortalOnboarding)
         }
         .downloadAlert(helper: downloadHelper)
         .environmentObject(downloadHelper)
@@ -101,6 +107,9 @@ struct LCTabView: View {
             checkAndSaveBundleId()
             checkGetTaskAllow()
             checkPrivateContainerBookmark()
+            if !portalOnboardingDone && sharedModel.multiLCStatus != 2 && !crashReportShow {
+                showPortalOnboarding = true
+            }
         }
         .onReceive(pub) { out in
             if let scene1 = sceneDelegate.window?.windowScene, let scene2 = out.object as? UIWindowScene, scene1 == scene2 {

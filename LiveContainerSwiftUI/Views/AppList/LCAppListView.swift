@@ -80,7 +80,8 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
     
     @AppStorage("LCMultitaskMode", store: LCUtils.appGroupUserDefault) var multitaskMode: MultitaskMode = .virtualWindow
     @AppStorage("darkModeIcon", store: LCUtils.appGroupUserDefault) private var darkModeIcon = false
-    
+    @AppStorage("PortalLibraryLayout") private var libraryLayout: PortalLibraryLayout = .grid
+
     @State private var isViewAppeared = false
     
     @ObservedObject var searchContext: SearchContext = SearchContext()
@@ -131,14 +132,20 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                 })
                 .hidden()
                 
-                LazyVStack {
-                    ForEach(filteredApps, id: \.self) { app in
-                        LCAppBanner(appModel: app, delegate: self)
+                if libraryLayout == .grid {
+                    PortalLibraryGrid(apps: filteredApps, delegate: self, showsRecents: searchContext.debouncedQuery.isEmpty)
+                        .padding()
+                        .animation(searchContext.isTyping ? nil : .easeInOut, value: filteredApps)
+                } else {
+                    LazyVStack {
+                        ForEach(filteredApps, id: \.self) { app in
+                            LCAppBanner(appModel: app, delegate: self)
+                        }
+                        .transition(.scale)
                     }
-                    .transition(.scale)
+                    .padding()
+                    .animation(searchContext.isTyping ? nil : .easeInOut, value: filteredApps)
                 }
-                .padding()
-                .animation(searchContext.isTyping ? nil : .easeInOut, value: filteredApps)
 
                 VStack {
                     if LCUtils.appGroupUserDefault.bool(forKey: "LCStrictHiding") {
@@ -203,6 +210,7 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                 }
 
             }
+            .background(PortalBackground())
             .navigationBarProgressBar(show:$installprogressVisible, progress: $installProgressPercentage)
             .coordinateSpace(name: "scroll")
             .onAppear {
@@ -259,6 +267,13 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
+                        Picker(pl("Vista", "View"), selection: $libraryLayout.animation(.spring(response: 0.4, dampingFraction: 0.8))) {
+                            ForEach(PortalLibraryLayout.allCases, id: \.self) { layout in
+                                Label(layout.title, systemImage: layout.systemImage)
+                                    .tag(layout)
+                            }
+                        }
+                        Divider()
                         Picker("Sort by", selection: $sharedAppSortManager.appSortType) {
                             ForEach(AppSortType.allCases, id: \.self) { sortType in
                                 Label(sortType.displayName, systemImage: sortType.systemImage)

@@ -1,3 +1,22 @@
+# Portal
+
+**Portal** es un fork de [LiveContainer](https://github.com/LiveContainer/LiveContainer) centrado en la experiencia: ejecuta IPAs sin instalarlas, como si fueran apps nativas, con una interfaz Liquid Glass y herramientas para que todo funcione a la primera.
+
+Lo que añade Portal sobre LiveContainer:
+
+- **Biblioteca en cuadrícula** estilo pantalla de inicio, con una fila de *Recientes* y un menú con todas las acciones al mantener pulsado.
+- **Doctor**: revisa el certificado, la firma de desarrollo, el App Group, las extensiones y el espacio libre, y explica cómo arreglar cada problema.
+- **Bienvenida guiada** en el primer arranque, que termina con un chequeo real de tu instalación.
+- **Diseño Liquid Glass** en iOS 26, con materiales translúcidos en iOS 15–18.
+
+El código propio de Portal está en `LiveContainerSwiftUI/Portal/`. El motor (cargador de binarios, firma, multitarea) es el de LiveContainer y se actualiza desde `upstream`.
+
+**Compilar:** cada push a la rama principal compila en GitHub Actions y publica `Portal.ipa` en la release *portal-nightly*. Instálala con SideStore o AltStore conservando las extensiones.
+
+Usa Portal solo con apps que te pertenezcan o que tengas derecho a usar. Portal se distribuye bajo AGPL-3.0, como LiveContainer; todo el mérito del motor es de sus autores.
+
+---
+
 <div align="center">
    <img width="217" height="217" src="./screenshots/livecontainer_icon.png" alt="Logo">
 </div>
